@@ -1,27 +1,69 @@
+const models = require('../database/models/index')
+const errors = require('../const/errors')
+
 module.exports = {
     getAll: async (req, res) => {
         try {
-            res.json({
-                message: "Información de todos los médicos"
+            const medicos = await models.medico.findAll({
+                include: [{
+                    model: models.turno,
+                    include: [{
+                        model: models.tratamiento
+                    }, {
+                        model: models.paciente
+                    }]
+                }]
             })
+            res.json({
+                sucess: true,
+                data: {
+                    medicos: medicos
+                }
+            })
+
+            if (!medicos) return next(errors.NoHayMedicos)
+
         } catch (err) {
             console.log(err)
         }
     },
     create: async (req, res) => {
         try {
+            const medico = await models.medico.create(req.body)
             res.json({
-                message: "Médico creado con id 44"
+                sucess: true,
+                data: {
+                    id: medico.id
+                }
             })
         } catch (err) {
             console.log(err)
         }
 
     },
-    get: async (req, res) => {
+    get: async (req, res, next) => {
         try {
+            const medico = await models.medico.findOne({
+                where: {
+                    id: req.params.id_medico
+                },
+                include: [{
+                    model: models.turno,
+                    include: [{
+                        model: models.tratamiento
+                    }, {
+                        model: models.paciente
+                    }]
+                }]
+            })
+            
+            if (!medico) return next(errors.MedicoInexistente)
+
             res.json({
-                message: "Información del Médico " + req.params.id_medico
+                sucess: true,
+                data: {
+                    medico: medico
+                }
             })
         } catch (err) {
             console.log(err)

@@ -2,6 +2,8 @@ const express = require('express')
 const globalConstants = require('./const/globalConstants')
 const routerConfig = require('./routes/index.routes')
 const logger = require('morgan')
+let errorHandler = require('./middlewares/error')
+let createError = require('http-errors')
 
 const configuracionApi = (app) => {
     app.use(express.json())
@@ -13,6 +15,12 @@ const configuracionApi = (app) => {
 
 const configuracionRouter = (app) => {
     app.use('/api/', routerConfig.routes_init())
+
+    app.use(function(req, res, next) {
+        next(createError(404))
+    })
+
+    app.use(errorHandler)
 
     return;
 }
