@@ -40,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         Turno.belongsTo(models.tratamiento)
         Turno.belongsTo(models.medico)
         Turno.belongsTo(models.paciente)
+        Turno.hasMany(models.estudio)
     }
       
     return Turno

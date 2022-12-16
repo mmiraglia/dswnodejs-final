@@ -1,23 +1,20 @@
 'user strict'
 
 module.exports = (sequelize, DataTypes) => {
-    let Paciente = sequelize.define('paciente', {
+    let Usuario = sequelize.define('usuario', {
         id: {
             type: DataTypes.BIGINT, 
-            //autoIncrement: true, 
+            autoIncrement: true, 
             primaryKey: true,  
             allowNull: false 
         },
-        nombre: { 
-            type: DataTypes.STRING, 
-            allowNull: false 
-        },
-        apellido: {
+        email: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        fecha_nacimiento: {
-            type: DataTypes.DATEONLY,
+        password :{
+            type: DataTypes.STRING,
+            allowNull: false
         },
         createdAt: { 
             type: DataTypes.DATE, 
@@ -39,11 +36,11 @@ module.exports = (sequelize, DataTypes) => {
         paranoid: true, 
         freezeTableName: true, 
     })
-    
-    Paciente.associate = models => {
-        Paciente.hasMany(models.turno)
-        Paciente.belongsTo(models.usuario, { foreignKey: 'id', targetKey: 'id'})
-    }
 
-    return Paciente
+    Usuario.associate = models => {
+        Usuario.hasOne(models.paciente, { foreignKey: 'id', targetKey: 'id'})
+        Usuario.hasOne(models.medico, { foreignKey: 'id', targetKey: 'id'})
+    }
+      
+    return Usuario
 }

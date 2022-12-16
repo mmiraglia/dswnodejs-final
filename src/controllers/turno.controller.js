@@ -1,5 +1,6 @@
 const models = require('../database/models/index')
 const errors = require('../const/errors')
+const globalConstants = require('../const/globalConstants')
 
 module.exports = {
     getAll: async (req, res) => {
@@ -95,4 +96,65 @@ module.exports = {
             next(err)
         }
     },
+    subirEstudio: async (req, res, next) => {
+        try {
+            const turno = await models.turno.findOne({
+                where: {
+                    id: req.body.turnoId
+                }
+            })
+            if (!turno) return next(errors.TurnoInexistente)
+
+            const estudio = await models.estudio.findOne({
+                where: {
+                    turnoId: req.body.turnoId,
+                    archivo: req.body.archivo
+                }
+            })
+            if (!estudio) { 
+                const estudio = await models.estudio.create({
+                    nombre: req.body.nombre,
+                    observaciones: req.body.observaciones,
+                    archivo: req.file ? req.file.filename : null, 
+                    archivo_nombre: req.file ? req.file.originalname : null, 
+                    usuarioId: req.body.usuarioId,
+                    turnoId: turno.id
+                })
+            } else {
+                return next(errors.ArchivoDuplicado)
+            }
+
+            res.json({
+                success: true,
+                data: {
+                    message: "Estudio cargado con éxito"
+                }
+            })
+
+        } catch (err) {
+            return next(err)
+        }
+    },
+    descargarEstudio: async (req, res, next) => {
+        try {
+            const turno = await models.turno.findOne({
+                where: {
+                    id: req.body.turnoId
+                }
+            })
+            if (!turno) return next(errors.TurnoInexistente)
+
+            const estudio = await models.estudio.findOne({
+                where: {
+                    turnoId: req.body.turnoId,
+                    archivo_nombre: req.body.archivo_nombre
+                }
+            })
+            if (!estudio) return next(errors.EstudioInexistente)
+
+            res.download(globalConstants.PATH_ESTUDIOS + estudio.archivo, estudio.archivo_nombre)
+        } catch (err) {
+            return next(err)
+        }
+    }
 }

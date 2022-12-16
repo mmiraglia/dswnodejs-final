@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     let Medico = sequelize.define('medico', {
         id: {
             type: DataTypes.BIGINT, 
-            autoIncrement: true, 
+            //autoIncrement: true, 
             primaryKey: true,  
             allowNull: false 
         },
@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Medico.associate = models => {
         Medico.hasMany(models.turno)
+        Medico.belongsTo(models.usuario, { foreignKey: 'id', targetKey: 'id'})
     }
       
     return Medico

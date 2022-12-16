@@ -1,5 +1,7 @@
 const models = require('../database/models/index')
 const errors = require('../const/errors')
+const { sequelize } = require('../database/models/index')
+const bcrypt = require('bcryptjs')
 
 module.exports = {
     getAll: async (req, res) => {
@@ -29,11 +31,26 @@ module.exports = {
     },
     create: async (req, res) => {
         try {
-            const medico = await models.medico.create(req.body)
-            res.json({
-                sucess: true,
-                data: {
-                    id: medico.id
+            const result = await sequelize.transaction(async (t) => {
+                // En una transacción creo el usuario (para obtener el id)
+                const usuario = await models.usuario.create({
+                    "email": req.body.email, 
+                    "password": bcrypt.hashSync(req.body.password, 10)
+                }, {transaction: t})
+                if (usuario) {
+                    // Le concateno el id generado anteriormente a los datos del body
+                    const medico_json = {
+                        "id": usuario.id,
+                        ...req.body
+                    }
+                    // Creo el médico
+                    const medico = await models.medico.create(medico_json, {transaction: t})
+                    res.json({
+                        sucess: true,
+                        data: {
+                            id: medico.id
+                        }
+                    })
                 }
             })
         } catch (err) {

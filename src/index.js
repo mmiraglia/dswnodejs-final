@@ -15,6 +15,7 @@ const configuracionApi = (app) => {
 
 const configuracionRouter = (app) => {
     app.use('/api/', routerConfig.routes_init())
+    app.use('/', routerConfig.routes_auth())
 
     app.use(function(req, res, next) {
         next(createError(404))

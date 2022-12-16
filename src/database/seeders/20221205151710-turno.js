@@ -11,7 +11,7 @@ module.exports = {
           defaults: {
               fecha: new Date(),
               observaciones: "Dolor de rodilla",
-              medicoId: 1,
+              medicoId: 3,
               pacienteId: 1,
               tratamientoId: 1
           }
@@ -22,7 +22,7 @@ module.exports = {
           },
           defaults: {
               fecha: new Date(),
-              medicoId: 1,
+              medicoId: 3,
               pacienteId: 2
           }
       }),
@@ -32,7 +32,7 @@ module.exports = {
           },
           defaults: {
               fecha: new Date(),
-              medicoId: 2,
+              medicoId: 4,
               pacienteId: 1
           }
       }),
@@ -42,7 +42,7 @@ module.exports = {
           },
           defaults: {
               fecha: new Date(),
-              medicoId: 2,
+              medicoId: 4,
               pacienteId: 2
           }
       })
